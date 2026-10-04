@@ -207,12 +207,20 @@ html,body,.btn,#pwi,.qtop,.opt,.pt span,.score,.stt,.tm,.lp{font-style:italic}
 #fsLyric{
     direction:rtl;
     font-style:normal;
-    font-family:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq','Scheherazade New',serif;
-    font-size:clamp(22px,5vw,42px);
-    line-height:2.1;
-    text-shadow:0 0 22px rgba(201,184,160,.35);
+    font-weight:500;
+    font-family:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq','Nafees Nastaleeq','Alvi Nastaleeq','Gulzar','Scheherazade New',serif;
+    font-size:clamp(26px,6vw,50px);
+    line-height:2.4;
+    letter-spacing:0;          /* spacing breaks the joined calligraphy letters */
+    word-spacing:.12em;
+    color:#f1e3c6;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"calt","liga","kern";
+    text-shadow:0 0 26px rgba(201,184,160,.45),0 0 60px rgba(138,47,53,.35);
+    padding:.25em .1em;
     overflow-wrap:anywhere;
 }
+#fsLyric .key{font-weight:500;font-size:1.28em;color:inherit;text-shadow:inherit}
 </style>
 </head>
 
@@ -1141,25 +1149,27 @@ RUN.s10 = async () => {
 // ============================
 const FINAL_MESSAGE = "This is exactly how my heart feels whenever someone asks me about you";
 
-const FINAL_SONG = { src: "alfaz.mp3" };
+const FINAL_SONG = { src: "assets/songs/alfaz.mp3" };
 
+const fmtLine = t => t.replace(/\*(.+?)\*/g, '<b class="key">$1</b>');
+
+// *star* ke andar wale lafz important hain, wo bare aur golden dikhte hain
 const LYRIC_LINES = [
-    "اُن کی تعریف میں کہیں کیا،",
-    "الفاظ ہی نہیں ہیں۔",
-    "جو کچھ میرا ہے، سب کچھ اُن کا،",
-    "اُن سے زیادہ، قسم سے ہم کو،",
-    "کوئی خاص ہی نہیں ہے۔",
-    "خیال ہے بڑا اُن کا۔"
+    "اُن کی *تعریف* میں کہیں کیا،",
+    "*الفاظ* ہی نہیں ہیں۔",
+    "جو کچھ میرا ہے، *سب کچھ* اُن کا،",
+    "اُن سے *زیادہ*، قسم سے ہم کو،",
+    "کوئی *خاص* ہی نہیں ہے۔",
+    "*خیال* ہے بڑا اُن کا۔"
 ];
 
 // [lineIndex, startSecond]. Poora lyrics do dafa: 1-6, phir dobara 1-6.
 // Timing theek karni ho to sirf seconds badlo (ya ?sync se tap karke record karo).
 const LYRIC_CUES = [
-    [0, 1.0],  [1, 5.2],  [2, 9.2],  [3, 14.9], [4, 19.0], [5, 22.0],
-    [0, 28.2], [1, 33.4], [2, 37.4], [3, 42.0], [4, 46.5], [5, 49.5]
+    [0, 1.0],  [1, 5.2],  [2, 8.9],  [3, 12.3], [4, 17.0], [5, 20.3],
+    [0, 24.2], [1, 30.4], [2, 34.0], [3, 37.7], [4, 44.5], [5, 47.7]
 ];
-
-const LYRIC_END = 56.8;  // second when the last line fades out
+const LYRIC_END = 54.5;   // second when the last line fades out
 
 const SYNC_MODE = location.search.includes("sync");
 
@@ -1208,7 +1218,7 @@ async function runSync(lyric) {
             marks.push(+nowT().toFixed(1));
             const k = marks.length - 1;
             lyric.classList.remove("in");
-            lyric.textContent = LYRIC_LINES[LYRIC_CUES[k][0]];
+            lyric.innerHTML = fmtLine(LYRIC_LINES[LYRIC_CUES[k][0]]);
             void lyric.offsetWidth;
             lyric.classList.add("in");
             if (marks.length === LYRIC_CUES.length) {
@@ -1252,7 +1262,7 @@ $("#fsStart").onclick = async () => {
         const [li, at] = LYRIC_CUES[k];
         await waitFor(at);
 
-        lyric.textContent = LYRIC_LINES[li];
+        lyric.innerHTML = fmtLine(LYRIC_LINES[li]);
         void lyric.offsetWidth;
         lyric.classList.add("in");
 
